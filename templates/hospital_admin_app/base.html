@@ -1,0 +1,676 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blood Bank Management System{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Revolutionary CSS with SLIDE BAR -->
+    <style>
+        /* ========================================
+           BLOOD FLOW COLOR THEORY SYSTEM
+           ======================================== */
+        :root {
+            /* Primary Blood Flow Palette */
+            --blood-arterial: #ff1a44;
+            --blood-venous: #b80020;
+            --plasma-glow: #ffeb3b26;
+            --hemoglobin-core: #8b000026;
+            --vein-pulse: #ff1744;
+            
+            /* Medical Tech Matrix */
+            --matrix-neon: #00e676;
+            --scanline-blue: #1976d2;
+            --holo-cyan: #00bcd4;
+            --vital-red: #f44336;
+            
+            /* Nano-gradient System */
+            --nano-gradient: linear-gradient(135deg, #ff1a44, #b80020, #ff1744);
+            --matrix-gradient: linear-gradient(45deg, #00e676, #1976d2, #00bcd4);
+            --plasma-gradient: radial-gradient(circle, #ffeb3b26 0%, transparent 70%);
+            
+            /* Physics-based animations */
+            --glow-intensity: 0 0 20px rgba(255, 26, 68, 0.6);
+            --pulse-glow: 0 0 30px rgba(0, 230, 118, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                radial-gradient(circle at 20% 80%, var(--plasma-glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, var(--hemoglobin-core) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 100%);
+            color: #e0e6ff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            transition: margin-left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: 
+                linear-gradient(180deg, rgba(10,10,26,0.98) 0%, rgba(26,10,42,0.98) 50%, rgba(10,10,26,0.98) 100%),
+                var(--nano-gradient);
+            backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: 
+                var(--glow-intensity),
+                inset 0 0 50px rgba(255,26,68,0.1),
+                10px 0 40px rgba(0,0,0,0.5);
+            border-right: 2px solid rgba(255,26,68,0.4);
+            z-index: 1060;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar.slide-in {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1055;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        body.sidebar-open {
+            margin-left: 280px;
+        }
+
+        body.sidebar-open .main-content {
+            transform: translateX(0);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, var(--vein-pulse), transparent),
+                radial-gradient(2px 2px at 40px 70px, #ff6b6b, transparent),
+                radial-gradient(1px 1px at 90px 40px, #ff1744, transparent),
+                radial-gradient(1px 1px at 130px 80px, #b80020, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: bloodFlow 20s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        @keyframes bloodFlow {
+            0% { transform: translateX(-200px) translateY(-100px) rotate(0deg); }
+            100% { transform: translateX(200px) translateY(100px) rotate(360deg); }
+        }
+
+        .sidebar .nav-link {
+            position: relative;
+            color: rgba(255,255,255,0.9);
+            padding: 1.2rem 1.8rem;
+            margin: 0.3rem 1rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,26,68,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .sidebar .nav-link:hover::before,
+        .sidebar .nav-link.active::before {
+            left: 100%;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255,26,68,0.25);
+            border-color: var(--vein-pulse);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 
+                var(--glow-intensity),
+                0 10px 30px rgba(255,26,68,0.4);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            width: 24px;
+            margin-right: 12px;
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        .navbar {
+            background: rgba(10,10,26,0.95);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255,26,68,0.3);
+            box-shadow: var(--glow-intensity);
+            transition: all 0.4s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 800;
+            font-size: 1.6rem;
+            background: var(--nano-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: var(--glow-intensity);
+        }
+
+        .navbar-toggler {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-toggler:hover {
+            background: rgba(255,26,68,0.2);
+            box-shadow: var(--glow-intensity);
+            transform: scale(1.1);
+        }
+
+        .main-content {
+            min-height: 100vh;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: translateX(0);
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.3),
+                var(--glow-intensity),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--matrix-gradient);
+            transform: scaleX(0);
+            transition: transform 0.6s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 
+                0 35px 70px rgba(0,0,0,0.5),
+                0 0 50px rgba(255,26,68,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .card-header {
+            background: var(--nano-gradient);
+            border-radius: 25px 25px 0 0;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .btn {
+            position: relative;
+            border-radius: 15px;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border: none;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(15px);
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--nano-gradient);
+            box-shadow: var(--glow-intensity);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 15px 35px rgba(255,26,68,0.6),
+                var(--pulse-glow);
+        }
+
+        .form-control, .form-select {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            color: white;
+            padding: 1rem 1.25rem;
+            transition: all 0.4s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--vein-pulse);
+            box-shadow: 
+                0 0 0 0.25rem rgba(255,26,68,0.25),
+                var(--glow-intensity);
+            background: rgba(255,255,255,0.12);
+            transform: scale(1.02);
+        }
+
+        @media (min-width: 992px) {
+            .sidebar {
+                transform: translateX(0) !important;
+                position: relative;
+                z-index: 1;
+            }
+            
+            body.sidebar-open {
+                margin-left: 280px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show position-relative" role="alert" style="animation: bloodPulse 0.6s ease-in-out;">
+                    {{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <style>
+        @keyframes bloodPulse {
+            0% { transform: scale(0.95); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+
+    <div class="d-flex">
+        <div class="sidebar" id="sidebar">
+            <div class="p-4 pb-5 position-relative">
+                <div class="sidebar-brand d-flex align-items-center justify-content-center pb-4 mb-5 position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="
+                        background: var(--nano-gradient);
+                        filter: blur(30px);
+                        opacity: 0.3;
+                        z-index: -1;
+                    "></div>
+                    <i class="fas fa-tint fa-3x digital-display me-4" style="filter: drop-shadow(0 0 20px currentColor);"></i>
+                    <div>
+                        <div class="sidebar-brand-text fs-3 fw-bold digital-display">BloodNET</div>
+                        <div class="sidebar-brand-text small opacity-75 mt-1">Quantum Admin v2.0</div>
+                    </div>
+                    <div class="ms-auto">
+                        <div class="dropdown">
+                            <a class="btn p-2 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                               style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 50px; height: 50px;">
+                                <i class="fas fa-user-circle fa-2x" style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(10,10,26,0.98); backdrop-filter: blur(25px); border: 1px solid rgba(255,26,68,0.3); min-width: 220px;">
+                                <li>
+                                    <span class="dropdown-item-text px-4 py-3 border-bottom" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <strong class="digital-display">{{ request.user.username }}</strong><br>
+                                        <small class="opacity-75">Quantum Hospital Admin</small>
+                                    </span>
+                                </li>
+                                <li><a class="dropdown-item px-4 py-2" href="#"><i class="fas fa-cog me-2 text-warning"></i>Neural Settings</a></li>
+                                <li><hr class="dropdown-divider opacity-25"></li>
+                                <li>
+                                    <a class="dropdown-item px-4 py-2 text-danger fw-bold" href="{% url 'logout' %}" 
+                                       onclick="return confirm('Neural disconnect confirmed?')">
+                                        <i class="fas fa-power-off me-2"></i>Emergency Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'admin_dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Quantum Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_donations' %}">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Blood Flow Matrix</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_requests' %}">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Vital Requests</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blood_stock' %}">
+                            <i class="fas fa-flask"></i>
+                            <span>Hemoglobin Stock</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_users' %}">
+                            <i class="fas fa-users"></i>
+                            <span>Donor Network</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <hr class="sidebar-divider my-4 opacity-25">
+
+                <ul class="nav nav-pills flex-column mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Neural Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="flex-grow-1">
+            <nav class="navbar navbar-expand-lg navbar-dark sticky-top px-4">
+                <div class="container-fluid">
+                    <button class="navbar-toggler d-lg-none me-3 p-2" type="button" id="sidebarToggle">
+                        <i class="fas fa-bars text-white fs-5"></i>
+                    </button>
+
+                    <a class="navbar-brand d-none d-lg-flex" href="{% url 'admin_dashboard' %}">
+                        <i class="fas fa-tint me-2 digital-display"></i>
+                        Hospital Quantum Control
+                    </a>
+
+                    <div class="navbar-nav ms-auto">
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" style="
+                                background: rgba(255,255,255,0.1);
+                                border-radius: 50%;
+                                width: 50px;
+                                height: 50px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                <i class="fas fa-user-circle fa-2x" style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="
+                                background: rgba(10,10,26,0.98);
+                                backdrop-filter: blur(25px);
+                                border: 1px solid rgba(255,26,68,0.3);
+                            ">
+                                <li><span class="dropdown-item-text px-4 py-3">
+                                    <strong class="digital-display">{{ request.user.username }}</strong><br>
+                                    <small class="opacity-75">Quantum Hospital Admin</small>
+                                </span></li>
+                                <li><hr class="dropdown-divider opacity-25"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2 text-warning"></i>Neural Settings</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Disconnect</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="main-content p-4 p-lg-5">
+                {% block content %}
+                <!-- 🩸 DONOR INSIGHTS SECTION -->
+                <div class="container-fluid">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header p-4">
+                                    <h3 class="mb-0 fw-bold"><i class="fas fa-heartbeat me-2"></i>Donor Insights</h3>
+                                    <small class="opacity-75">Blood donation facts, myths, eligibility, and recent research</small>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row g-4">
+                                        <div class="col-md-3">
+                                            <div class="p-4 rounded-4 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                                <i class="fas fa-user-check fa-2x mb-3 text-success"></i>
+                                                <h5 class="fw-bold">Eligibility</h5>
+                                                <p class="mb-0">Healthy adults are usually eligible if they meet age, weight, hemoglobin, and health screening criteria. [web:22][web:25]</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="p-4 rounded-4 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                                <i class="fas fa-clock fa-2x mb-3 text-warning"></i>
+                                                <h5 class="fw-bold">Donation Gap</h5>
+                                                <p class="mb-0">Whole-blood donors are commonly allowed again after about 56 days or roughly 3 months, depending on local rules. [web:22][web:30]</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="p-4 rounded-4 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                                <i class="fas fa-shield-heart fa-2x mb-3 text-info"></i>
+                                                <h5 class="fw-bold">Myth Check</h5>
+                                                <p class="mb-0">Donating blood does not make a healthy person permanently weak; the body replenishes fluid quickly and blood cells over time. [web:27][web:30]</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="p-4 rounded-4 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                                <i class="fas fa-flask fa-2x mb-3 text-danger"></i>
+                                                <h5 class="fw-bold">New Research</h5>
+                                                <p class="mb-0">Recent studies suggest frequent donation may be linked with subtle genetic changes and possibly a lower blood-cancer risk, but research is still developing. [web:23][web:17]</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-4 mt-2">
+                                        <div class="col-lg-6">
+                                            <div class="card h-100">
+                                                <div class="card-header p-3">
+                                                    <h5 class="mb-0 fw-bold"><i class="fas fa-list-check me-2"></i>Donor Screening Facts</h5>
+                                                </div>
+                                                <div class="card-body p-4">
+                                                    <ul class="mb-0">
+                                                        <li>Age is commonly 18 to 65 years, depending on local policy. [web:25][web:28]</li>
+                                                        <li>Hemoglobin thresholds are checked before donation. [web:22][web:25]</li>
+                                                        <li>People with fever, cold, flu, or active infection should not donate. [web:25][web:28]</li>
+                                                        <li>Recent tattoos, piercings, or some travel exposures may temporarily defer donation. [web:25][web:28]</li>
+                                                        <li>Pregnancy and breastfeeding require deferral in many systems. [web:28]</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="card h-100">
+                                                <div class="card-header p-3">
+                                                    <h5 class="mb-0 fw-bold"><i class="fas fa-hand-holding-heart me-2"></i>Impact Summary</h5>
+                                                </div>
+                                                <div class="card-body p-4">
+                                                    <ul class="mb-0">
+                                                        <li>One donation can help multiple patients through red cells, plasma, or platelets. [web:18][web:30]</li>
+                                                        <li>Blood services support trauma care, surgery, cancer treatment, and chronic disease care. [web:18][web:21]</li>
+                                                        <li>WHO emphasizes safe and sufficient blood systems as a core health need. [web:21]</li>
+                                                        <li>India’s e-Raktkosh notes that regular blood donation helps the supply chain and testing systems. [web:30]</li>
+                                                        <li>Donation awareness campaigns continue to focus on myths, eligibility, and repeat donation. [web:29][web:27]</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const body = document.body;
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('slide-in');
+            sidebarOverlay.classList.toggle('show');
+            body.classList.toggle('sidebar-open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('slide-in');
+            sidebarOverlay.classList.remove('show');
+            body.classList.remove('sidebar-open');
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                setTimeout(() => bsAlert.close(), 5000);
+            });
+        }, 1000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+            
+            sidebarLinks.forEach(function(link) {
+                const href = link.getAttribute('href');
+                if (href === currentPath || currentPath.startsWith(href)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: 4px;
+                height: 4px;
+                background: radial-gradient(circle, var(--vein-pulse), transparent);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                left: ${e.clientX}px;
+                top: ${e.clientY}px;
+                animation: bloodParticle 0.6s ease-out forwards;
+            `;
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 600);
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bloodParticle {
+                to {
+                    transform: translateY(-50px) scale(0);
+                    opacity: 0;
+                }
+            }
+            .digital-display {
+                font-family: 'Orbitron', monospace;
+                background: linear-gradient(90deg, var(--scanline-blue), var(--holo-cyan));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-shadow: 0 0 20px currentColor;
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.addEventListener('touchmove', function(e) {
+            if (sidebar.classList.contains('slide-in') && window.innerWidth < 992) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>

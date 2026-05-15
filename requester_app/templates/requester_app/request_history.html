@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request History{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Request History</h2>
+        <a href="{% url 'requester_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+
+    {% if requests %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Blood Group</th>
+                        <th>Units</th>
+                        <th>Patient</th>
+                        <th>Hospital</th>
+                        <th>City</th>
+                        <th>Status</th>
+                        <th>Required By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                    <tr>
+                        <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
+                        <td><span class="badge badge-primary fs-6">{{ request.blood_group }}</span></td>
+                        <td>{{ request.units_needed }}</td>
+                        <td>{{ request.patient_name }}</td>
+                        <td>{{ request.hospital_name }}</td>
+                        <td>{{ request.city }}</td>
+                        <td>
+                            {% if request.status == 'pending' %}
+                                <span class="badge badge-warning">Pending</span>
+                            {% elif request.status == 'approved' %}
+                                <span class="badge badge-success">Approved</span>
+                            {% elif request.status == 'fulfilled' %}
+                                <span class="badge badge-info">Fulfilled</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ request.status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ request.required_by|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <h4>No requests found</h4>
+            <p>Your request history is empty. <a href="{% url 'request_blood' %}" class="alert-link">Create your first blood request</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

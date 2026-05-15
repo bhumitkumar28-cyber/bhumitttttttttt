@@ -1,0 +1,88 @@
+{% extends 'hospital_admin_app/base.html' %}
+{% load static %}
+
+{% block title %}Manage Requests{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Manage Blood Requests</h1>
+        <a href="{% url 'admin_dashboard' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Status Filter -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="form-group mr-3">
+                    <label for="status" class="mr-2">Filter by Status:</label>
+                    <select name="status" id="status" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="approved" {% if current_status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="rejected" {% if current_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        <option value="fulfilled" {% if current_status == 'fulfilled' %}selected{% endif %}>Fulfilled</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Requests Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Blood Requests List</h6>
+        </div>
+        <div class="card-body">
+            {% if requests %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Requester</th>
+                                <th>Hospital</th>
+                                <th>Blood Group</th>
+                                <th>Units Needed</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in requests %}
+                            <tr>
+                                <td>{{ request.requester.username }} ({{ request.requester.phone }})</td>
+                                <td>{{ request.hospital_name }}</td>
+                                <td><span class="badge badge-info">{{ request.blood_group }}</span></td>
+                                <td>{{ request.units_needed }}</td>
+                                <td>{{ request.created_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <span class="badge badge-{% if request.status == 'fulfilled' or request.status == 'approved' %}success{% elif request.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                        {{ request.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if request.status == 'pending' %}
+                                        <a href="{% url 'approve_request' request.pk %}" class="btn btn-sm btn-success mr-1">Approve</a>
+                                        <a href="{% url 'reject_request' request.pk %}" class="btn btn-sm btn-danger mr-1">Reject</a>
+                                    {% elif request.status == 'approved' %}
+                                        <a href="{% url 'fulfill_request' request.pk %}" class="btn btn-sm btn-info">Mark Fulfilled</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-gray-400 mb-3"></i>
+                    <p class="text-muted">No blood requests found.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,435 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BloodNET - Quantum Blood Bank{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cyber-red: #ff1744;
+            --cyber-dark: #0a0a1a;
+            --glass-bg: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.12);
+            --text-primary: #e8eaf6;
+            --text-secondary: #b0bec5;
+            --glow-red: 0 0 20px rgba(255,23,68,0.5);
+            --gradient-red: linear-gradient(135deg, #ff1744, #d50000);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,23,68,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,230,118,0.08) 0%, transparent 50%),
+                linear-gradient(135deg, var(--cyber-dark) 0%, #1a0a2a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #ff1744, transparent),
+                radial-gradient(1px 1px at 40px 70px, #00e676, transparent),
+                radial-gradient(1px 1px at 90px 40px, #00bcd4, transparent);
+            background-repeat: repeat;
+            background-size: 150px 120px;
+            animation: cyberFlow 30s linear infinite;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        @keyframes cyberFlow {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
+        }
+
+        /* NAVBAR - CYBERPUNK STYLE */
+        .navbar {
+            background: rgba(10,10,26,0.95) !important;
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid rgba(255,23,68,0.3);
+            box-shadow: var(--glow-red), 0 4px 20px rgba(0,0,0,0.5);
+            padding: 1rem 2rem !important;
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', monospace !important;
+            font-weight: 800 !important;
+            font-size: 1.6rem !important;
+            background: var(--gradient-red);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: var(--glow-red);
+            letter-spacing: 1px;
+        }
+
+        .navbar-brand i {
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 10px;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background: rgba(255,23,68,0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-red);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255,23,68,0.3);
+            color: white !important;
+            box-shadow: var(--glow-red);
+        }
+
+        /* DROPDOWNS */
+        .dropdown-menu {
+            background: rgba(10,10,26,0.98) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,23,68,0.3) !important;
+            border-radius: 15px !important;
+            box-shadow: var(--glow-red), 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 0.5rem !important;
+        }
+
+        .dropdown-item {
+            color: var(--text-primary) !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 10px;
+            margin: 0.25rem 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255,23,68,0.2) !important;
+            color: white !important;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: rgba(255,23,68,0.3) !important;
+        }
+
+        /* NOTIFICATION BADGE */
+        .badge {
+            font-size: 0.7em !important;
+            padding: 0.4em 0.7em !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* MAIN CONTENT */
+        .container-fluid {
+            padding-top: 7rem !important;
+            padding-bottom: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* CARDS */
+        .card {
+            background: rgba(255,255,255,0.08) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            margin-bottom: 2rem;
+            color: var(--text-primary) !important;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 25px rgba(255,23,68,0.3);
+            border-color: rgba(255,23,68,0.3);
+        }
+
+        .card-header {
+            background: var(--gradient-red) !important;
+            border: none !important;
+            color: white !important;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 1.5rem 2rem !important;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .card-header:hover::after {
+            left: 100%;
+        }
+
+        /* FORM ELEMENTS */
+        .form-label {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255,255,255,0.1) !important;
+            border: 2px solid var(--glass-border) !important;
+            border-radius: 12px !important;
+            color: var(--text-primary) !important;
+            padding: 0.875rem 1.25rem !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255,255,255,0.15) !important;
+            border-color: var(--cyber-red) !important;
+            box-shadow: 0 0 0 0.25rem rgba(255,23,68,0.2);
+            color: var(--text-primary) !important;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary) !important;
+        }
+
+        /* TABLES */
+        .table {
+            background: transparent !important;
+            color: var(--text-primary) !important;
+        }
+
+        .table th {
+            background: rgba(255,23,68,0.25) !important;
+            border: none !important;
+            color: white !important;
+            padding: 1.25rem 1.5rem !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .table td {
+            padding: 1.25rem 1.5rem !important;
+            border-color: var(--glass-border) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* ALERTS */
+        .alert {
+            border-radius: 15px !important;
+            border: none !important;
+            backdrop-filter: blur(15px);
+            color: var(--text-primary) !important;
+            margin-bottom: 2rem;
+        }
+
+        /* UTILITIES */
+        .digital-display {
+            font-family: 'Orbitron', monospace !important;
+            background: linear-gradient(45deg, #00e676, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding-top: 6rem !important;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'donor_dashboard' %}">
+                <i class="fas fa-tint me-2"></i>BloodNET
+            </a>
+            <button class="navbar-toggler border-0 p-2 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    style="background: rgba(255,255,255,0.1);">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.resolver_match.url_name == 'donor_dashboard' %} active{% endif %}" href="{% url 'donor_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.resolver_match.url_name == 'donate' %} active{% endif %}" href="{% url 'donate' %}">
+                            <i class="fas fa-hand-holding-heart me-2 text-danger"></i>Donate
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.resolver_match.url_name == 'donation_history' %} active{% endif %}" href="{% url 'donation_history' %}">
+                            <i class="fas fa-history me-2"></i>History
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle position-relative p-2" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell fa-lg"></i>
+                            <span class="badge bg-warning text-dark position-absolute top-0 start-100 translate-middle rounded-pill notifications-count" style="display: none;">
+                                {{ notifications|length|default:0 }}
+                                <span class="visually-hidden">notifications</span>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                            {% for notification in notifications %}
+                            <li>
+                                <a class="dropdown-item p-3 rounded-3 mb-2" href="{% url 'donor_notif_read' notification.pk %}">
+                                    <div class="d-flex">
+                                        <i class="fas fa-circle-info fa-2x text-primary me-3 mt-1 flex-shrink-0"></i>
+                                        <div>
+                                            <strong class="d-block mb-1">{{ notification.title }}</strong>
+                                            <small class="text-muted d-block mb-1">{{ notification.message|truncatewords:15 }}</small>
+                                            <small class="text-muted">{{ notification.created_at|date:"M d, Y H:i" }}</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li class="text-center py-3">
+                                <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
+                                <div class="text-muted">No new notifications</div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle fa-lg me-2"></i>
+                            <span class="d-none d-md-inline">{{ user.get_full_name|default:user.username|truncatechars:15 }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <span class="dropdown-item py-3 text-center border-bottom">
+                                    <i class="fas fa-user-circle fa-2x mb-2 text-primary"></i>
+                                    <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                    <br><small class="text-muted">Donor ID: {{ user.id }}</small>
+                                </span>
+                            </li>
+                            <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2 text-warning"></i>Profile Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item py-2 text-danger fw-semibold" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-5 pt-4 pb-5">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-lg mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-circle-check me-3 fs-4" style="color: #00e676;"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Notification badge update
+        (function() {
+            const count = {{ notifications|length|default:0 }};
+            const badge = document.querySelector('.notifications-count');
+            if (count > 0) {
+                badge.style.display = 'block';
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.animation = 'pulse 2s infinite';
+            }
+        })();
+
+        // Active nav link highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(function(link) {
+                const href = link.getAttribute('href');
+                if (href === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scrolling for alerts
+        document.querySelectorAll('.alert').forEach(function(alert) {
+            setTimeout(() => {
+                alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

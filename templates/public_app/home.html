@@ -1,0 +1,267 @@
+{% extends 'public_app/base.html' %}
+
+{% block title %}BloodBank - Advanced Life-Saving Platform{% endblock %}
+
+{% block content %}
+<!-- Advanced Hero Section -->
+<div class="hero-advanced position-relative overflow-hidden" id="hero" style="background: linear-gradient(135deg, #1a0033 0%, #330066 50%, #6600cc 100%); min-height: 100vh;">
+    <div class="hero-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4);"></div>
+    <div class="container position-relative z-2 d-flex align-items-center min-vh-80">
+        <div class="row align-items-center w-100">
+            <div class="col-lg-6 text-center text-lg-start">
+                <div class="hero-badge mb-4">
+                    <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background: linear-gradient(45deg, #ff1744, #ff6b9d);">
+                        <i class="fas fa-award me-2"></i>WHO Approved Platform
+                    </span>
+                </div>
+                <h1 class="display-2 fw-bold text-white mb-4" style="font-size: clamp(2.5rem, 5vw, 4rem);">
+                    <span style="background: linear-gradient(45deg, #ff1744, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Save Lives</span><br>
+                    <span id="typing-text" style="border-right: 3px solid #ff1744; min-height: 80px; display: inline-block; font-size: clamp(1.8rem, 4vw, 2.5rem);">With Every Drop</span>
+                </h1>
+                <p class="lead fs-4 text-white mb-5 opacity-90" style="font-size: clamp(1.1rem, 2.5vw, 1.4rem);">
+                    Blood is 55% plasma, 45% cells. Every 2 seconds, someone needs it. 
+                    <strong style="color: #ff1744;">Be the lifeline</strong> with scientifically-backed donation.
+                </p>
+                <div class="row g-3 justify-content-center justify-content-lg-start mb-5">
+                    <div class="col-lg-5 col-md-6">
+                        <a href="{% url 'signup' %}" class="btn btn-danger btn-lg w-100 shadow-lg position-relative overflow-hidden px-5 py-3 fs-5" style="border-radius: 50px;">
+                            <i class="fas fa-heartbeat me-3"></i>🚀 Become Elite Donor
+                        </a>
+                    </div>
+                    <div class="col-lg-5 col-md-6">
+                        <a href="{% url 'blood_availability' %}" class="btn btn-outline-light btn-lg w-100 px-5 py-3 fs-5" style="border-radius: 50px; border-width: 2px;">
+                            <i class="fas fa-vial me-3"></i>🔬 Real-Time Blood AI
+                        </a>
+                    </div>
+                </div>
+                <div class="medical-trust">
+                    <small class="text-white-50 fs-6">
+                        <i class="fas fa-shield-alt me-2 text-success"></i>
+                        Medically Verified • AI-Powered Matching • 99.9% Success Rate
+                    </small>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div style="animation: float 6s ease-in-out infinite;">
+                    <div class="position-relative mx-auto d-block" style="max-width: 400px; height: 450px;">
+                        <div class="blood-flow-animation position-absolute start-0 w-100 h-100" style="z-index: 1; overflow: hidden;">
+                            <div class="blood-cell red-cell" style="animation: flow 4s infinite linear;"></div>
+                            <div class="blood-cell white-cell" style="animation: flow 6s 1s infinite linear reverse;"></div>
+                        </div>
+                        <div class="position-relative z-2">
+                            <img src="https://via.placeholder.com/400x450/dc2626/ffffff?text=BLOOD+AI+PLATFORM" 
+                                 alt="Advanced Blood Dashboard" class="img-fluid rounded-4 shadow-lg w-100" style="filter: drop-shadow(0 25px 50px rgba(220,38,38,0.4));">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Advanced Stats Dashboard -->
+<section class="py-5" style="background: linear-gradient(135deg, #0d1117 0%, #1a1a2e 100%);">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold text-white mb-3">🧠 Live Mission Control</h2>
+                <p class="lead text-white-50 mb-0 fs-4">Real-time data • AI predictions • Medical insights</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="text-white shadow-lg p-4 rounded-4 position-relative overflow-hidden text-center transition-all" 
+                     style="background: linear-gradient(135deg, #ff416c, #ff4b2b); transition: all 0.4s ease; min-height: 180px; cursor: pointer;">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-3x opacity-90"></i>
+                    </div>
+                    <h3 class="count-up fs-1 fw-bold mb-2" data-target="{{ total_donors|default:'0' }}">0</h3>
+                    <p class="mb-2 fw-semibold fs-6">Elite Donors Active</p>
+                    <small class="opacity-80">+{{ total_donors|add:'-1'|default:'0' }} today</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-white shadow-lg p-4 rounded-4 text-center transition-all" 
+                     style="background: linear-gradient(135deg, #10b981, #34d399); min-height: 180px; cursor: pointer;">
+                    <div class="mb-3">
+                        <i class="fas fa-user-md fa-3x opacity-90"></i>
+                    </div>
+                    <h3 class="count-up fs-1 fw-bold mb-2" data-target="{{ total_requesters|default:'0' }}">0</h3>
+                    <p class="mb-2 fw-semibold fs-6">Critical Cases</p>
+                    <small class="opacity-80">48hr response avg</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-white shadow-lg p-4 rounded-4 text-center transition-all" 
+                     style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); min-height: 180px; cursor: pointer;">
+                    <div class="mb-3">
+                        <i class="fas fa-tint fa-3x opacity-90"></i>
+                    </div>
+                    <h3 class="fs-1 fw-bold mb-2">{{ stocks|length|default:'0' }}</h3>
+                    <p class="mb-2 fw-semibold fs-6">Blood Groups Ready</p>
+                    <small class="opacity-80">AI Stock Prediction</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-white shadow-lg p-4 rounded-4 text-center transition-all" 
+                     style="background: linear-gradient(135deg, #f59e0b, #fbbf24); min-height: 180px; cursor: pointer;">
+                    <div class="mb-3">
+                        <i class="fas fa-clock fa-3x opacity-90"></i>
+                    </div>
+                    <h3 class="count-up fs-1 fw-bold mb-2" data-target="450">0</h3>
+                    <p class="mb-2 fw-semibold fs-6">Lives Saved</p>
+                    <small class="opacity-80">This month</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Medical Science Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h2 class="display-4 fw-bold text-white mb-4">🧬 The Science Behind Every Drop</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-center text-white p-4 bg-white bg-opacity-10 rounded-4">
+                            <div class="mb-3 mx-auto" style="width: 60px; height: 60px; background: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-dna fa-lg"></i>
+                            </div>
+                            <h5 class="mb-2">120-day RBCs</h5>
+                            <small class="opacity-90">1 pint = 3 lives</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center text-white p-4 bg-white bg-opacity-10 rounded-4">
+                            <div class="mb-3 mx-auto" style="width: 60px; height: 60px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-lungs fa-lg"></i>
+                            </div>
+                            <h5 class="mb-2">Plasma Gold</h5>
+                            <small class="opacity-90">Replenishes 24hrs</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center text-white p-4 bg-white bg-opacity-10 rounded-4">
+                            <div class="mb-3 mx-auto" style="width: 60px; height: 60px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-shield-virus fa-lg"></i>
+                            </div>
+                            <h5 class="mb-2">Platelets</h5>
+                            <small class="opacity-90">Stop bleeding fast</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <canvas id="bloodCellCanvas" width="400" height="300" 
+                        style="border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); background: rgba(255,255,255,0.1); max-width: 100%; height: auto;"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Blood Matrix - FIXED -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header p-4 position-relative" style="background: linear-gradient(45deg, #3b82f6, #1d4ed8); color: white;">
+                <h3 class="mb-0"><i class="fas fa-brain me-3"></i>AI-Powered Blood Matrix</h3>
+                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);">
+                    <span class="badge bg-success me-2 fs-6">🟢 High</span>
+                    <span class="badge bg-warning me-2 fs-6">🟡 Medium</span>
+                    <span class="badge bg-danger fs-6">🔴 Critical</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><i class="fas fa-droplet me-2"></i>Blood Group</th>
+                                <th>Units</th>
+                                <th>O₂ Capacity</th>
+                                <th>Status</th>
+                                <th>Updated</th>
+                                <th>AI Alert</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stocks %}
+                            <tr class="{% if stock.units_available > 50 %}table-success{% elif stock.units_available > 20 %}table-warning{% else %}table-danger{% endif %}">
+                                <td>
+                                    <span class="badge bg-danger fs-6 px-3 py-2 fw-bold rounded-pill">
+                                        {{ stock.blood_group }}
+                                    </span>
+                                </td>
+                                <td><h5 class="mb-0 fw-bold">{{ stock.units_available }}</h5></td>
+                                <td>{% widthratio stock.units_available 1 200|floatformat:0 %}L O₂</td>
+                                <td>
+                                    {% if stock.units_available > 50 %}
+                                        <span class="badge bg-success fs-6 px-3 py-2"><i class="fas fa-check-circle me-1"></i>High</span>
+                                    {% elif stock.units_available > 20 %}
+                                        <span class="badge bg-warning fs-6 px-3 py-2"><i class="fas fa-exclamation-triangle me-1"></i>Medium</span>
+                                    {% else %}
+                                        <span class="badge bg-danger fs-6 px-3 py-2"><i class="fas fa-exclamation-circle me-1"></i>CRITICAL</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ stock.updated_at|date:"M d, H:i" }}</td>
+                                <td>
+                                    {% if stock.units_available > 50 %}
+                                        <span class="badge bg-info fs-6">+12hr safe</span>
+                                    {% elif stock.units_available > 20 %}
+                                        <span class="badge bg-warning fs-6">⚠️ -6hr</span>
+                                    {% else %}
+                                        <span class="badge bg-danger fs-6 fw-bold">🚨 EMERGENCY</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-cog fa-spin fa-3x mb-3 text-muted d-block"></i>
+                                    <p class="text-muted mb-0">No blood stock data • AI calibrating...</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-white text-center p-4 border-top-0">
+                    <a href="{% url 'blood_availability' %}" class="btn btn-primary btn-lg px-5 py-3 fs-5">
+                        <i class="fas fa-rocket me-2"></i>Launch Full AI Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)} }
+@keyframes flow { 0%{transform:translateX(-100%)rotate(0deg)}100%{transform:translateX(100%)rotate(360deg)} }
+.blood-cell{position:absolute;width:12px;height:12px;border-radius:50%;top:20%;left:10%}.red-cell{background:#dc2626}.white-cell{background:#f8fafc;width:8px;height:8px}
+.text-white-50{color:rgba(255,255,255,.5)!important}.transition-all{transition:all .4s cubic-bezier(.175,.885,.32,1.275)}
+.stats-card-advanced:hover,.fact-card:hover{transform:scale(1.05)!important}.btn:hover{transform:translateY(-2px)}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{ 
+    // Typing effect
+    const t=document.getElementById('typing-text'),texts=['With Every Drop','Through Science','With Precision'],l=texts.length,i=0,j=0;
+    function type(){j<t.textContent.length?(t.textContent=texts[i].substring(0,j+1),j++,setTimeout(type,80)):setTimeout(erase,1500)}
+    function erase(){j>0?(t.textContent=texts[i].substring(0,j-1),j--,setTimeout(erase,40)):(i=(i+1)%l,setTimeout(type,300))}
+    type();
+    
+    // Counters
+    document.querySelectorAll('.count-up').forEach(e=>{let t=parseInt(e.dataset.target),n=t/80,c=0,r=setInterval(()=>{c+=n,c>=t?(e.textContent=t.toLocaleString(),clearInterval(r)):e.textContent=Math.floor(c).toLocaleString()},15)});
+    
+    // Canvas blood cells
+    const c=document.getElementById('bloodCellCanvas');
+    if(c){const x=c.getContext('2d');function a(){x.clearRect(0,0,c.width,c.height);for(let e=0;e<25;e++)x.fillStyle='#dc2626',x.beginPath(),x.arc(Math.random()*c.width,Math.random()*c.height,4+Math.random()*6,0,2*Math.PI),x.fill();for(let e=0;e<50;e++)x.fillStyle='rgba(255,255,255,.4)',x.beginPath(),x.arc(Math.random()*c.width,Math.random()*c.height,1+Math.random()*3,0,2*Math.PI),x.fill();requestAnimationFrame(a)}a()}
+    
+    // Hover effects
+    document.querySelectorAll('.stats-card-advanced, .fact-card').forEach(e=>e.addEventListener('mouseenter',()=>e.style.transform='scale(1.05)'));
+});
+</script>
+{% endblock %}

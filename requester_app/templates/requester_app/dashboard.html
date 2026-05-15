@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Requester Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Dashboard</h2>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5>Total Requests</h5>
+                    <h2>{{ stats.total }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5>Approved</h5>
+                    <h2>{{ stats.approved }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5>Pending</h5>
+                    <h2>{{ stats.pending }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5>Fulfilled</h5>
+                    <h2>{{ stats.fulfilled }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Requests -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Requests <a href="{% url 'request_history' %}" class="btn btn-sm btn-outline-primary float-right">View All</a></h5>
+                </div>
+                <div class="card-body">
+                    {% if requests %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Blood Group</th>
+                                        <th>Units</th>
+                                        <th>Patient</th>
+                                        <th>Hospital</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for request in requests %}
+                                    <tr>
+                                        <td><span class="badge badge-primary">{{ request.blood_group }}</span></td>
+                                        <td>{{ request.units_needed }}</td>
+                                        <td>{{ request.patient_name }}</td>
+                                        <td>{{ request.hospital_name }}</td>
+                                        <td>
+                                            {% if request.status == 'pending' %}
+                                                <span class="badge badge-warning">Pending</span>
+                                            {% elif request.status == 'approved' %}
+                                                <span class="badge badge-success">Approved</span>
+                                            {% elif request.status == 'fulfilled' %}
+                                                <span class="badge badge-info">Fulfilled</span>
+                                            {% else %}
+                                                <span class="badge badge-secondary">{{ request.status|title }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No requests found. <a href="{% url 'request_blood' %}">Create your first request</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Blood Stocks -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Available Blood Stocks</h5>
+                </div>
+                <div class="card-body">
+                    {% if stocks %}
+                        {% for stock in stocks %}
+                        <div class="mb-2 p-2 border rounded">
+                            <strong>{{ stock.blood_group }}</strong>: {{ stock.units_available }} units
+                            <span class="badge badge-{% if stock.units_available > 5 %}success{% else %}danger{% endif %} float-right">
+                                {{ stock.units_available }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No stock information available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    {% if notifications %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Notifications ({{ notifications.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% for notification in notifications %}
+                    <div class="alert alert-info mb-2">
+                        {{ notification.message }}
+                        <a href="{% url 'requester_notif_read' notification.pk %}" class="float-right text-decoration-none">Mark as Read</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

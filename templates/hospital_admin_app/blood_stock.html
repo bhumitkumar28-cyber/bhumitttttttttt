@@ -1,0 +1,85 @@
+{% extends 'hospital_admin_app/base.html' %}
+{% load static %}
+
+{% block title %}Blood Stock Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Blood Stock Management</h1>
+        <a href="{% url 'admin_dashboard' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Update Stock Form -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Update Blood Stock</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form.blood_group.label_tag }}
+                        {{ form.blood_group }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        {{ form.units.label_tag }}
+                        {{ form.units }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        {{ form.action.label_tag }}
+                        {{ form.action }}
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn btn-primary btn-block">Update Stock</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Current Stock -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Current Blood Stock</h6>
+        </div>
+        <div class="card-body">
+            {% if stocks %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Blood Group</th>
+                                <th>Units Available</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stocks %}
+                            <tr>
+                                <td><strong>{{ stock.blood_group }}</strong></td>
+                                <td>{{ stock.units_available }}</td>
+                                <td>
+                                    <span class="badge badge-{% if stock.units_available > 10 %}success{% elif stock.units_available > 0 %}warning{% else %}danger{% endif %}">
+                                        {% if stock.units_available > 10 %}Good Stock{% elif stock.units_available > 0 %}Low Stock{% else %}Out of Stock{% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-tint fa-3x text-gray-400 mb-3"></i>
+                    <p class="text-muted">No blood stock records found.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

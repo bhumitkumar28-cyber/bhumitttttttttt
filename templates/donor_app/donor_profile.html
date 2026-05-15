@@ -1,0 +1,390 @@
+{% extends 'donor_app/base.html' %}
+{% load static %}
+
+{% block title %}Donor Profile - Blood Bank{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* DONOR PROFILE PREMIUM STYLES */
+    .profile-hero {
+        background: linear-gradient(135deg, rgba(161,37,56,0.9), rgba(107,28,34,0.9)), 
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx="50%" cy="50%"><stop offset="0%" stop-color="%23D9415A" stop-opacity="0.3"/><stop offset="100%" stop-color="%23A12538" stop-opacity="0"/></radialGradient></defs><rect width="100" height="100" fill="url(%23g)"/></svg>');
+        background-size: cover;
+        background-attachment: fixed;
+        min-height: 400px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.1) 270deg, transparent 360deg);
+        animation: heroSpin 20s linear infinite;
+    }
+
+    @keyframes heroSpin { 100% { transform: rotate(360deg); } }
+
+    .avatar-donor {
+        width: 140px;
+        height: 140px;
+        border: 5px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--blood-glow), var(--plasma-gold));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: white;
+        box-shadow: 0 20px 60px rgba(217,65,90,0.6);
+        transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-donor::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: conic-gradient(transparent, rgba(255,255,255,0.3), transparent);
+        animation: avatarGlow 4s linear infinite;
+    }
+
+    @keyframes avatarGlow { 100% { transform: rotate(360deg); } }
+
+    .avatar-donor:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 30px 80px rgba(217,65,90,0.8);
+    }
+
+    .blood-type-badge {
+        background: linear-gradient(135deg, var(--rbc-dark), var(--blood-primary));
+        color: white;
+        font-weight: 800;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        box-shadow: 0 10px 30px rgba(107,28,34,0.6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-item {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(217,65,90,0.3);
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-10px);
+        background: rgba(255,255,255,0.15);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--donor-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .donation-timeline {
+        position: relative;
+        padding: 3rem 0;
+    }
+
+    .timeline-line {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--blood-glow), var(--plasma-gold));
+        transform: translateX(-50%);
+        border-radius: 2px;
+        box-shadow: 0 0 20px rgba(217,65,90,0.5);
+    }
+
+    .timeline-item {
+        position: relative;
+        width: 50%;
+        padding: 1rem 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-item:nth-child(odd) { left: 0; }
+    .timeline-item:nth-child(even) { left: 50%; }
+
+    .timeline-dot {
+        width: 20px;
+        height: 20px;
+        background: var(--donor-gradient);
+        border-radius: 50%;
+        position: absolute;
+        left: 50%;
+        top: 1.5rem;
+        transform: translateX(-50%);
+        box-shadow: 0 0 20px rgba(217,65,90,0.8);
+        z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+        .timeline-line { left: 20px; }
+        .timeline-item { width: calc(100% - 40px); left: 40px !important; }
+        .timeline-item:nth-child(even) { left: 40px !important; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- DONOR PROFILE HERO -->
+<section class="profile-hero text-white text-center py-5 position-relative overflow-hidden">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="avatar-donor mb-4 mx-auto">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h1 class="display-4 fw-bold mb-3 cyber-font">{{ donor.full_name|default:user.get_full_name|default:user.username }}</h1>
+                <p class="lead opacity-90 mb-4">{{ donor.blood_group|default:"Blood Group Not Set" }} Donor</p>
+                
+                <div class="blood-type-badge mb-4 d-inline-block">
+                    <i class="fas fa-tint me-2"></i>
+                    {% if donor.blood_group %}{{ donor.blood_group }}{% else %}Update Profile{% endif %}
+                </div>
+                
+                <div class="row g-3 justify-content-center">
+                    <div class="col-auto">
+                        <a href="{% url 'donate' %}" class="btn btn-lg btn-danger px-5 py-2 fw-bold shadow-lg">
+                            <i class="fas fa-plus-circle me-2"></i>Donate Now
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="#stats" class="btn btn-lg btn-outline-light px-4 py-2 fw-bold">
+                            <i class="fas fa-chart-line me-2"></i>View Stats
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DONOR STATS -->
+<section id="stats" class="container my-5">
+    <h2 class="text-center medical-text display-5 fw-bold mb-5">📊 Your Donor Journey</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <span class="stat-number">{{ donations.total|default:0 }}</span>
+            <h5 class="fw-bold mb-0 opacity-90">Total Donations</h5>
+            <small class="mono-font text-muted">Lives Saved: {{ lives_saved|default:0 }}</small>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ donor.age|default:"?" }} Yrs</span>
+            <h5 class="fw-bold mb-0 opacity-90">Age</h5>
+            <small class="mono-font text-muted">Active Donor Period</small>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ donor.weight|default:"?" }} kg</span>
+            <h5 class="fw-bold mb-0 opacity-90">Weight</h5>
+            <small class="mono-font text-muted">Eligible for Donation</small>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ last_donation_days|default:"Never" }}</span>
+            <h5 class="fw-bold mb-0 opacity-90">Days Since Last</h5>
+            {% if last_donation_days < 90 %}
+                <small class="mono-font text-success">✅ Eligible Now</small>
+            {% else %}
+                <small class="mono-font text-warning">⏳ Wait {{ last_donation_days|add:-90 }} days</small>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT & BASIC INFO -->
+<section class="container my-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="donor-card p-4 p-lg-5">
+                <h3 class="donor-card-header mb-4">
+                    <i class="fas fa-id-card me-2"></i>Basic Information
+                </h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-white-50">Full Name</label>
+                        <div class="form-control-plaintext bg-transparent border-0 p-0 fs-5 fw-bold text-white">
+                            {{ donor.full_name|default:user.get_full_name|default:user.username }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-white-50">Email</label>
+                        <div class="form-control-plaintext bg-transparent border-0 p-0 fs-5 text-white">
+                            {{ user.email }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-white-50">Phone</label>
+                        <div class="form-control-plaintext bg-transparent border-0 p-0 fs-5 text-white">
+                            {{ donor.phone|default:"Not Provided" }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-white-50">Blood Group</label>
+                        <div class="form-control-plaintext bg-transparent border-0 p-0 fs-5 fw-bold text-danger">
+                            {{ donor.blood_group|default:"Not Set" }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-white-50">Date of Birth</label>
+                        <div class="form-control-plaintext bg-transparent border-0 p-0 fs-5 text-white">
+                            {{ donor.dob|date:"M d, Y"|default:"Not Provided" }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-white-50">Address</label>
+                        <div class="form-control-plaintext bg-transparent border-0 p-0 fs-5 text-white">
+                            {{ donor.address|default:"Not Provided"|truncatewords:10 }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-top border-secondary border-opacity-25">
+                    <a href="{% url 'donor_profile' %}" class="btn btn-outline-danger px-4">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="donor-card p-4 h-100">
+                <h3 class="donor-card-header mb-4">
+                    <i class="fas fa-heartbeat me-2"></i>Health Status
+                </h3>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white-50">Hb Level:</span>
+                        <span class="fw-bold text-success">{{ donor.hb_level|default:"12.5" }} g/dL</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <small class="mono-font text-muted">Lives Saved: {{ lives_saved|default:0 }}</small>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white-50">Last Checkup:</span>
+                        <span class="fw-bold text-info">{{ donor.last_checkup|date:"M Y"|default:"Pending" }}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <span class="badge bg-gradient text-white fs-6 px-4 py-2 mb-3">
+                        {% if last_donation_days < 90 %}🟢 Eligible{% else %}🟡 Wait{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DONATION TIMELINE -->
+<section class="container my-5">
+    <h2 class="text-center medical-text display-5 fw-bold mb-5">📈 Donation History</h2>
+    <div class="donation-timeline position-relative">
+        <div class="timeline-line"></div>
+        {% for donation in recent_donations %}
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card donor-card ms-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0 fw-bold text-white">{{ donation.hospital.name }}</h5>
+                        <span class="badge bg-success">{{ donation.blood_component }}</span>
+                    </div>
+                    <p class="card-text opacity-90 mb-2">{{ donation.hospital.address|truncatewords:8 }}</p>
+                    <div class="d-flex justify-content-between">
+                        <small class="mono-font text-muted">{{ donation.date|date:"M d, Y" }}</small>
+                        <small class="mono-font text-success">Lives Saved: 3</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="fas fa-heart-circle-plus fa-4x text-muted mb-4 opacity-50"></i>
+            <h4 class="text-muted">No Donations Yet</h4>
+            <p class="text-muted">Make your first donation and save lives!</p>
+            <a href="{% url 'donate' %}" class="btn btn-danger btn-lg px-5">
+                <i class="fas fa-hand-point-right me-2"></i>First Donation
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- QUICK ACTIONS -->
+<section class="container my-5">
+    <h2 class="text-center medical-text display-5 fw-bold mb-5">⚡ Quick Actions</h2>
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'donate' %}" class="donor-card text-center h-100 text-decoration-none">
+                <div class="donor-card-header">Donate Blood</div>
+                <div class="p-4">
+                    <i class="fas fa-tint fa-3x text-danger mb-3"></i>
+                    <h5 class="fw-bold mb-2">Schedule Donation</h5>
+                    <p class="opacity-75 mb-0">Find nearby camps</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'donation_history' %}" class="donor-card text-center h-100 text-decoration-none">
+                <div class="donor-card-header" style="background: linear-gradient(135deg, #059669, #10B981);">History</div>
+                <div class="p-4">
+                    <i class="fas fa-history fa-3x text-success mb-3"></i>
+                    <h5 class="fw-bold mb-2">View History</h5>
+                    <p class="opacity-75 mb-0">All donations</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <a href="#" class="donor-card text-center h-100 text-decoration-none">
+                <div class="donor-card-header" style="background: linear-gradient(135deg, #3B82F6, #60A5FA);">Share</div>
+                <div class="p-4">
+                    <i class="fas fa-share-alt fa-3x text-primary mb-3"></i>
+                    <h5 class="fw-bold mb-2">Share Story</h5>
+                    <p class="opacity-75 mb-0">Social media</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'donor_profile' %}" class="btn btn-outline-danger px-4">
+                <div class="donor-card-header" style="background: linear-gradient(135deg, #F59E0B, #FBBF24);">Profile</div>
+                <div class="p-4">
+                    <i class="fas fa-user-edit fa-3x text-warning mb-3"></i>
+                    <h5 class="fw-bold mb-2">Edit Profile</h5>
+                    <p class="opacity-75 mb-0">Update details</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

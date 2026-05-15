@@ -1,0 +1,82 @@
+{% extends 'donor_app/base.html' %}
+{% block title %}Donation History - Blood Bank{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-history text-danger me-2"></i>Donation History
+    </h2>
+    <a href="{% url 'donor_dashboard' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">All your donation records</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-danger text-white">
+                    <tr>
+                        <th>Date</th>
+                        <th>Blood Group</th>
+                        <th>Units</th>
+                        <th>City</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donation in donations %}
+                    <tr class="{% if donation.status == 'pending' %}table-warning{% elif donation.status == 'rejected' %}table-danger{% endif %}">
+                        <td>
+                            <strong>{{ donation.donation_date|date:"M d, Y" }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ donation.blood_group|lower }} text-white fs-6 px-2 py-1">
+                                {{ donation.blood_group }}
+                            </span>
+                        </td>
+                        <td><span class="badge bg-secondary">{{ donation.units }} unit{{ donation.units|pluralize }}</span></td>
+                        <td>{{ donation.city }}</td>
+                        <td>
+                            {% if donation.status == 'approved' %}
+                                <span class="badge bg-success fs-6 px-3 py-2">
+                                    <i class="fas fa-check-circle me-1"></i>Approved
+                                </span>
+                            {% elif donation.status == 'pending' %}
+                                <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                                    <i class="fas fa-clock me-1"></i>Pending
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger fs-6 px-3 py-2">
+                                    <i class="fas fa-times-circle me-1"></i>Rejected
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if donation.notes %}
+                                <span class="text-muted small" title="{{ donation.notes }}">{{ donation.notes|truncatewords:5 }}</span>
+                            {% else %}
+                                <span class="text-muted small">-</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ donation.created_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                            <p class="mb-0">No donation history found.</p>
+                            <a href="{% url 'donate' %}" class="btn btn-danger mt-2">Make Your First Donation</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'hospital_admin_app/base.html' %}
+{% load static %}
+
+{% block title %}Hospital Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Stats Cards - SAME as before -->
+    <div class="row mb-4">
+        <!-- Your existing stats cards -->
+    </div>
+
+    <!-- QUICK ACTIONS SECTION - NEW -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0">🔥 Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{% url 'manage_donations' %}" class="btn btn-primary btn-block mb-2">
+                                Manage Donations ({{ stats.pending_donations }} pending)
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'manage_requests' %}" class="btn btn-info btn-block mb-2">
+                                Manage Requests ({{ stats.pending_requests }} pending)
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'blood_stock' %}" class="btn btn-success btn-block mb-2">
+                                Blood Stock
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'manage_users' %}" class="btn btn-warning btn-block mb-2">
+                                Manage Users
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Donations WITH ACTION BUTTONS -->
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Donations</h6>
+                    <a href="{% url 'manage_donations' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_donations %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Donor</th>
+                                        <th>Blood Group</th>
+                                        <th>Units</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for donation in recent_donations %}
+                                    <tr>
+                                        <td>{{ donation.donor.username }}</td>
+                                        <td><span class="badge badge-secondary">{{ donation.blood_group }}</span></td>
+                                        <td>{{ donation.units }}</td>
+                                        <td>
+                                            <span class="badge badge-{% if donation.status == 'approved' %}success{% elif donation.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                                {{ donation.status|title }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if donation.status == 'pending' %}
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'approve_donation' donation.pk %}" 
+                                                       class="btn btn-success btn-sm" 
+                                                       onclick="return confirm('Approve this donation?')">
+                                                        ✅ Approve
+                                                    </a>
+                                                    <a href="{% url 'reject_donation' donation.pk %}" 
+                                                       class="btn btn-danger btn-sm" 
+                                                       onclick="return confirm('Reject this donation?')">
+                                                        ❌ Reject
+                                                    </a>
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted small">No action</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent donations.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Requests WITH ACTION BUTTONS -->
+        <div class="col-xl-6 col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Requests</h6>
+                    <a href="{% url 'manage_requests' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_requests %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Requester</th>
+                                        <th>Blood Group</th>
+                                        <th>Units</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for request in recent_requests %}
+                                    <tr>
+                                        <td>{{ request.requester.username }}</td>
+                                        <td><span class="badge badge-secondary">{{ request.blood_group }}</span></td>
+                                        <td>{{ request.units_needed }}</td>
+                                        <td>
+                                            <span class="badge badge-{% if request.status == 'approved' %}success{% elif request.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                                {{ request.status|title }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if request.status == 'pending' %}
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'approve_request' request.pk %}" 
+                                                       class="btn btn-success btn-sm" 
+                                                       onclick="return confirm('Approve this request?')">
+                                                        ✅ Approve
+                                                    </a>
+                                                    <a href="{% url 'reject_request' request.pk %}" 
+                                                       class="btn btn-danger btn-sm" 
+                                                       onclick="return confirm('Reject this request?')">
+                                                        ❌ Reject
+                                                    </a>
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted small">No action</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent requests.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blood Stock - SAME -->
+    <!-- Your existing blood stock section -->
+</div>
+{% endblock %}

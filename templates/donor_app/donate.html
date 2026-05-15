@@ -1,0 +1,82 @@
+{% extends 'donor_app/base.html' %}
+{% block title %}Donate Blood - Blood Bank{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-heartbeat me-2"></i>Schedule Blood Donation
+                </h3>
+                <p class="mb-0 mt-2 opacity-75">Help save lives - every drop counts!</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.blood_group.id_for_label }}" class="form-label">
+                                <i class="fas fa-tint me-1 text-danger"></i>Blood Group
+                            </label>
+                            {{ form.blood_group }}
+                            {% if form.blood_group.errors %}
+                                <div class="text-danger small mt-1">{{ form.blood_group.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.units.id_for_label }}" class="form-label">
+                                <i class="fas fa-flask me-1 text-danger"></i>Units (1-4)
+                            </label>
+                            {{ form.units }}
+                            {% if form.units.errors %}
+                                <div class="text-danger small mt-1">{{ form.units.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.city.id_for_label }}" class="form-label">
+                                <i class="fas fa-map-marker-alt me-1 text-danger"></i>City
+                            </label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                                <div class="text-danger small mt-1">{{ form.city.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.donation_date.id_for_label }}" class="form-label">
+                                <i class="fas fa-calendar-alt me-1 text-danger"></i>Preferred Date
+                            </label>
+                            {{ form.donation_date }}
+                            {% if form.donation_date.errors %}
+                                <div class="text-danger small mt-1">{{ form.donation_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">
+                            <i class="fas fa-sticky-note me-1 text-danger"></i>Additional Notes
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="text-danger small mt-1">{{ form.notes.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'donor_dashboard' %}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Donation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

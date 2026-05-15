@@ -1,0 +1,575 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blood Bank AI - Hematology Advanced{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ADVANCED HEMATOLOGY & NEUROLOGY PALETTE 🩸🧠🧬 */
+            --arterial-oxygenated: #A12538;
+            --venous-deoxygenated: #6B1C22;
+            --hemoglobin-glow: #D9415A;
+            --plasma-amber: #E8A23E;
+            --erythrocyte-red: #8B1E3F;
+            --plasma-translucent: #F2C94C;
+            --clotted-scarlet: #C41E3A;
+            --hemolysis-pink: #F4A8B7;
+            --neuron-gold: #F59E0B;
+            --synapse-blue: #3B82F6;
+            --dna-helix: #10B981;
+            --mitochondria-purple: #8B5CF6;
+            --life-gradient: linear-gradient(45deg, var(--arterial-oxygenated), var(--hemoglobin-glow), var(--plasma-amber));
+            --neuro-gradient: linear-gradient(135deg, var(--synapse-blue), var(--neuron-gold), var(--mitochondria-purple));
+            --dark-bg: #0A0E17;
+            --card-glow: rgba(169, 37, 56, 0.25);
+            --vein-shadow: rgba(107, 28, 34, 0.35);
+            --who-blue: #1E40AF;
+            --medical-green: #059669;
+            --ai-glow: #00D4FF;
+        }
+
+        * { font-family: 'Poppins', sans-serif; }
+        .mono-font { font-family: 'Roboto Mono', monospace; }
+        .cyber-font { font-family: 'Orbitron', monospace; }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0f141f 40%, #1a1c27 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ULTRA-ADVANCED TEXT EFFECTS */
+        .medical-text {
+            background: var(--life-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            text-shadow: 0 0 40px rgba(169, 37, 56, 0.8);
+            position: relative;
+        }
+
+        .medical-text::after {
+            content: attr(data-glow);
+            position: absolute;
+            top: 0; left: 0;
+            background: var(--life-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: blur(2px);
+            opacity: 0.6;
+            z-index: -1;
+        }
+
+        /* NEURONAL DATA CARDS */
+        .neuro-card {
+            background: rgba(15, 20, 35, 0.97);
+            backdrop-filter: blur(35px);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 30px;
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.6),
+                0 0 60px var(--synapse-blue),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .neuro-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -150%;
+            width: 150%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent);
+            transition: left 1.2s;
+        }
+
+        .neuro-card:hover::before { left: 100%; }
+        .neuro-card:hover { 
+            transform: translateY(-20px) scale(1.03) rotateX(5deg);
+            box-shadow: 
+                0 60px 120px rgba(0, 0, 0, 0.7),
+                0 0 100px var(--synapse-blue);
+        }
+
+        /* DNA HELIX ANIMATION */
+        .dna-helix {
+            position: relative;
+            height: 120px;
+            width: 120px;
+            margin: 0 auto 2rem;
+        }
+
+        .dna-strand {
+            position: absolute;
+            width: 4px;
+            height: 100px;
+            background: linear-gradient(180deg, var(--dna-helix), #34D399);
+            border-radius: 2px;
+            animation: dnaTwist 4s linear infinite;
+        }
+
+        .dna-strand:nth-child(1) { left: 20px; animation-delay: 0s; }
+        .dna-strand:nth-child(2) { left: 40px; animation-delay: -2s; transform: rotate(180deg); }
+        .dna-strand:nth-child(3) { left: 60px; animation-delay: -1s; }
+        .dna-strand:nth-child(4) { left: 80px; animation-delay: -3s; transform: rotate(180deg); }
+
+        @keyframes dnaTwist {
+            0% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(180deg) translateY(-20px); }
+            100% { transform: rotate(360deg) translateY(0px); }
+        }
+
+        /* NEURON FIRING SYSTEM */
+        .neuron-core {
+            width: 80px; height: 80px;
+            background: radial-gradient(circle, var(--neuron-gold), var(--synapse-blue));
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto 1.5rem;
+            animation: neuronPulse 3s ease-in-out infinite;
+            box-shadow: 0 0 40px var(--neuron-gold);
+        }
+
+        .neuron-core::before,
+        .neuron-core::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: inherit;
+            animation: inherit;
+        }
+
+        .neuron-core::before { width: 60px; height: 60px; top: 10px; left: 10px; animation-duration: 2.5s; }
+        .neuron-core::after { width: 40px; height: 40px; top: 20px; left: 20px; animation-duration: 2s; animation-delay: 0.5s; }
+
+        @keyframes neuronPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 60px var(--neuron-gold); }
+        }
+
+        /* MITOCHONDRIA POWERHOUSE */
+        .mito-power {
+            background: linear-gradient(45deg, var(--mitochondria-purple), #A78BFA, var(--synapse-blue));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mito-power::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.3) 180deg, transparent 360deg);
+            animation: mitoSpin 8s linear infinite;
+        }
+
+        @keyframes mitoSpin { 100% { transform: rotate(360deg); } }
+
+        /* DOCTOR AI CONSULTATION */
+        .ai-doctor {
+            background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(59,130,246,0.15));
+            border: 2px solid var(--ai-glow);
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-doctor::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            right: 0; bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(0,212,255,0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            animation: aiScan 4s linear infinite;
+        }
+
+        @keyframes aiScan { 100% { transform: translateX(100%); } }
+
+        /* CELLULAR MATRIX */
+        .cell-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .cell-unit {
+            background: rgba(16,185,129,0.15);
+            border: 1px solid var(--dna-helix);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .cell-unit:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: rgba(16,185,129,0.25);
+            box-shadow: 0 20px 40px rgba(16,185,129,0.3);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .neuro-card { margin: 1rem; }
+            .dna-helix { height: 80px; width: 80px; }
+            .dna-strand { width: 3px; height: 70px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ADVANCED HEMATOLOGY PARTICLES SYSTEM -->
+    <div id="particles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;"></div>
+
+    <!-- Your navbar (keeping existing) -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top px-4">
+        <div class="container-fluid">
+            <a class="navbar-brand cyber-font" href="{% url 'home' %}">
+                <i class="fas fa-dna me-2" style="animation: dnaTwist 2s linear infinite; color: var(--dna-helix);"></i>
+                BloodBank AI v2.0
+            </a>
+            <!-- Rest of your navbar -->
+        </div>
+    </nav>
+
+    <main class="position-relative py-5">
+        {% if messages %}{% endif %}
+
+        <!-- 🧠 NEURONAL BLOOD BRAIN BARRIER SECTION -->
+        <section class="container mb-6">
+            <div class="row justify-content-center">
+                <div class="col-lg-11 text-center mb-6">
+                    <h1 class="medical-text display-3 fw-bold mb-4" data-glow="NEURONAL HEMATOLOGY">🧠🩸</h1>
+                    <p class="lead fs-4 opacity-90 cyber-font">Advanced Cellular & Neural Integration Analysis</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- NEURON FIRING CARD -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="neuro-card p-5 text-center text-white h-100">
+                        <div class="neuron-core mb-4">
+                            <i class="fas fa-brain fs-1" style="color: #fff;"></i>
+                        </div>
+                        <h3 class="fw-bold fs-2 mb-3 cyber-font">47ms</h3>
+                        <p class="mb-4 opacity-85 fs-6">Synaptic Transmission Delay<br><small class="mono-font">Blood-Brain Barrier Crossing</small></p>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-gradient" style="width: 87%; background: var(--neuro-gradient);"></div>
+                        </div>
+                        <small class="mono-font text-info">Optimal: < 50ms</small>
+                    </div>
+                </div>
+
+                <!-- DNA HELIX INTEGRITY -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="neuro-card p-5 text-center text-white h-100 mito-power">
+                        <div class="dna-helix mb-4">
+                            <div class="dna-strand"></div>
+                            <div class="dna-strand"></div>
+                            <div class="dna-strand"></div>
+                            <div class="dna-strand"></div>
+                        </div>
+                        <h3 class="fw-bold fs-2 mb-3" style="color: var(--dna-helix);">99.8%</h3>
+                        <p class="mb-4 opacity-85 fs-6">DNA Helix Integrity<br><small class="mono-font">Post-Donation Recovery</small></p>
+                        <div class="badge bg-success fs-6 px-3 py-2">Telomere Stable</div>
+                    </div>
+                </div>
+
+                <!-- MITOCHONDRIA ATP PRODUCTION -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="neuro-card p-5 text-center text-white h-100">
+                        <div class="neuron-core mb-4" style="background: var(--mitochondria-purple);"></div>
+                        <h3 class="fw-bold fs-2 mb-3" style="color: var(--mitochondria-purple);">2.4k</h3>
+                        <p class="mb-4 opacity-85 fs-6">ATP Molecules/sec<br><small class="mono-font">Mitochondrial Powerhouse</small></p>
+                        <i class="fas fa-bolt fa-2x text-warning mb-3"></i>
+                        <small class="mono-font text-warning">Peak Performance</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 👨‍⚕️ AI DOCTOR CONSULTATION SYSTEM -->
+        <section class="container mb-6">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="ai-doctor neuro-card p-5 position-relative">
+                        <div class="row align-items-center">
+                            <div class="col-lg-3 text-center mb-4 mb-lg-0">
+                                <div class="neuron-core mb-3" style="width: 100px; height: 100px; background: var(--ai-glow);">
+                                    <i class="fas fa-robot fs-2"></i>
+                                </div>
+                                <h4 class="fw-bold cyber-font mb-2" style="color: var(--ai-glow);">Dr. Neuralis AI</h4>
+                                <small class="mono-font opacity-75">Hematology Neural Network</small>
+                            </div>
+                            <div class="col-lg-9 ps-lg-5">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="cell-unit">
+                                            <i class="fas fa-syringe fa-2x mb-2" style="color: var(--dna-helix);"></i>
+                                            <h6 class="fw-bold mb-1">Hemoglobin</h6>
+                                            <div class="mono-font fs-6">14.2 g/dL <span class="text-success">↑ Optimal</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="cell-unit">
+                                            <i class="fas fa-leaf fa-2x mb-2" style="color: var(--neuron-gold);"></i>
+                                            <h6 class="fw-bold mb-1">Platelets</h6>
+                                            <div class="mono-font fs-6">285k/μL <span class="text-success">Perfect</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="cell-unit">
+                                            <i class="fas fa-dna fa-2x mb-2" style="color: var(--mitochondria-purple);"></i>
+                                            <h6 class="fw-bold mb-1">DNA Repair</h6>
+                                            <div class="mono-font fs-6">98.7% <span class="text-warning">Active</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="cell-unit">
+                                            <i class="fas fa-brain fa-2x mb-2" style="color: var(--synapse-blue);"></i>
+                                            <h6 class="fw-bold mb-1">Neural Load</h6>
+                                            <div class="mono-font fs-6">12% <span class="text-info">Low Stress</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-4 border-secondary">
+                                <div class="text-center">
+                                    <h5 class="fw-bold mb-3 cyber-font" style="color: var(--ai-glow);">🩸 CONSULTATION READY</h5>
+                                    <p class="fs-6 opacity-90 mb-0">Your cellular matrix is in optimal condition for donation. Neural stress minimal. Proceed with confidence.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🧬 CELLULAR MATRIX ANALYSIS -->
+        <section class="container mb-6">
+            <div class="row justify-content-center">
+                <div class="col-lg-11">
+                    <h2 class="medical-text display-4 fw-bold text-center mb-5" data-glow="CELLULAR MATRIX">🧬</h2>
+                    
+                    <div class="cell-matrix">
+                        <div class="cell-unit">
+                            <i class="fas fa-redo fa-2x mb-3" style="color: var(--erythrocyte-red);"></i>
+                            <h5 class="fw-bold mb-2">Erythrocytes</h5>
+                            <div class="mono-font fs-5">5.2M/μL</div>
+                            <small class="opacity-75">Red Blood Cells • 120 Day Cycle</small>
+                        </div>
+                        <div class="cell-unit">
+                            <i class="fas fa-water fa-2x mb-3" style="color: var(--plasma-amber);"></i>
+                            <h5 class="fw-bold mb-2">Plasma</h5>
+                            <div class="mono-font fs-5">92% Volume</div>
+                            <small class="opacity-75">Regenerates 24-48h • Protein Rich</small>
+                        </div>
+                        <div class="cell-unit">
+                            <i class="fas fa-grip-lines fa-2x mb-3" style="color: var(--neuron-gold);"></i>
+                            <h5 class="fw-bold mb-2">Platelets</h5>
+                            <div class="mono-font fs-5">7 Day Cycle</div>
+                            <small class="opacity-75">Clotting Factor • Surgery Critical</small>
+                        </div>
+                        <div class="cell-unit">
+                            <i class="fas fa-mountain fa-2x mb-3" style="color: var(--medical-green);"></i>
+                            <h5 class="fw-bold mb-2">Leukocytes</h5>
+                            <div class="mono-font fs-5">7.2k/μL</div>
+                            <small class="opacity-75">Immune System • Infection Defense</small>
+                        </div>
+                        <div class="cell-unit">
+                            <i class="fas fa-bolt fa-2x mb-3" style="color: var(--mitochondria-purple);"></i>
+                            <h5 class="fw-bold mb-2">Mitochondria</h5>
+                            <div class="mono-font fs-5">2k ATP/sec</div>
+                            <small class="opacity-75">Cellular Powerhouse • Energy Factory</small>
+                        </div>
+                        <div class="cell-unit">
+                            <i class="fas fa-satellite-dish fa-2x mb-3" style="color: var(--synapse-blue);"></i>
+                            <h5 class="fw-bold mb-2">Neuralink</h5>
+                            <div class="mono-font fs-5">47ms Latency</div>
+                            <small class="opacity-75">Brain-Blood Interface • Real-time</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+         <!-- 🩸 HIDDEN BLOOD DONATION INSIGHTS -->
+<section class="container mb-6">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <h2 class="medical-text display-4 fw-bold text-center mb-5" data-glow="HIDDEN BLOOD DONATION INSIGHTS">🩸</h2>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="neuro-card p-4 text-center text-white h-100">
+                        <i class="fas fa-heart-pulse fa-3x mb-3 text-danger"></i>
+                        <h4 class="fw-bold mb-2 cyber-font">One Donation, Many Lives</h4>
+                        <p class="mb-0 opacity-85">
+                            A single blood donation can help save up to 3 lives, which is why one small act can create a huge impact for patients in surgery, trauma, and chronic illness care. [web:18][web:15]
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="neuro-card p-4 text-center text-white h-100">
+                        <i class="fas fa-clock fa-3x mb-3" style="color: var(--ai-glow);"></i>
+                        <h4 class="fw-bold mb-2 cyber-font">Fast Donation Process</h4>
+                        <p class="mb-0 opacity-85">
+                            The actual whole-blood donation usually takes less than 10 to 12 minutes, while the full process with checks and paperwork is still typically short. [web:15][web:13]
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="neuro-card p-4 text-center text-white h-100">
+                        <i class="fas fa-droplet fa-3x mb-3" style="color: var(--plasma-amber);"></i>
+                        <h4 class="fw-bold mb-2 cyber-font">Recovery Myth Busted</h4>
+                        <p class="mb-0 opacity-85">
+                            You do not lose your whole blood supply when donating; the body replaces fluid quickly, and red blood cells rebuild over the following weeks. [web:13][web:16]
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell-matrix">
+                <div class="cell-unit">
+                    <i class="fas fa-user-check fa-2x mb-3" style="color: var(--dna-helix);"></i>
+                    <h5 class="fw-bold mb-2">Eligibility</h5>
+                    <div class="mono-font fs-6">Healthy adults can donate</div>
+                    <small class="opacity-75">Eligibility depends on age, weight, hemoglobin, blood pressure, and medical history. [web:18][web:19]</small>
+                </div>
+
+                <div class="cell-unit">
+                    <i class="fas fa-calendar-check fa-2x mb-3" style="color: var(--neuron-gold);"></i>
+                    <h5 class="fw-bold mb-2">Repeat Donation</h5>
+                    <div class="mono-font fs-6">Whole blood every 56 days</div>
+                    <small class="opacity-75">A healthy donor may donate whole blood about every 56 days, depending on local rules. [web:16][web:15]</small>
+                </div>
+
+                <div class="cell-unit">
+                    <i class="fas fa-microscope fa-2x mb-3" style="color: var(--mitochondria-purple);"></i>
+                    <h5 class="fw-bold mb-2">New Research</h5>
+                    <div class="mono-font fs-6">Possible donor benefits</div>
+                    <small class="opacity-75">Recent studies suggest regular donation may influence iron levels, blood pressure, insulin sensitivity, and blood-cell genetics, though research is still evolving. [web:14][web:20]</small>
+                </div>
+
+                <div class="cell-unit">
+                    <i class="fas fa-shield-heart fa-2x mb-3" style="color: var(--medical-green);"></i>
+                    <h5 class="fw-bold mb-2">Safety First</h5>
+                    <div class="mono-font fs-6">Safe blood is essential</div>
+                    <small class="opacity-75">WHO says blood transfusion saves lives and every country should maintain safe and adequate blood supply systems. [web:21]</small>
+                </div>
+
+                <div class="cell-unit">
+                    <i class="fas fa-question-circle fa-2x mb-3" style="color: var(--synapse-blue);"></i>
+                    <h5 class="fw-bold mb-2">Common Myth</h5>
+                    <div class="mono-font fs-6">Donation weakens you forever</div>
+                    <small class="opacity-75">This is false; healthy people recover from donation, and donors are screened to make sure donation is appropriate. [web:13][web:19]</small>
+                </div>
+
+                <div class="cell-unit">
+                    <i class="fas fa-tint fa-2x mb-3" style="color: var(--plasma-amber);"></i>
+                    <h5 class="fw-bold mb-2">What Patients Need</h5>
+                    <div class="mono-font fs-6">RBCs, platelets, plasma</div>
+                    <small class="opacity-75">Hospitals rely on red cells, platelets, and plasma for emergencies, surgery, cancer care, and chronic disease treatment. [web:12][web:18]</small>
+                </div>
+            </div>
+
+            <div class="mt-4 neuro-card p-4 text-center text-white">
+                <h4 class="fw-bold cyber-font mb-2" style="color: var(--ai-glow);">Donation awareness message</h4>
+                <p class="mb-0 opacity-85">
+                    Blood donation is not only a life-saving service for patients, it is also a highly organized, screened, and carefully timed process designed to protect both donor and recipient.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ULTRA-ADVANCED PARTICLE SYSTEM -->
+    <script>
+        function createAdvancedParticles() {
+            const particles = document.getElementById('particles');
+            const particleTypes = [
+                {color: '#A12538', shape: 'circle', size: [2,6], speed: [0.5,1.5]},
+                {color: '#D9415A', shape: 'triangle', size: [3,8], speed: [0.8,2]},
+                {color: '#3B82F6', shape: 'hexagon', size: [4,10], speed: [1,2.5]},
+                {color: '#F59E0B', shape: 'square', size: [2,7], speed: [0.6,1.8]},
+                {color: '#10B981', shape: 'dna', size: [5,12], speed: [0.4,1.2]}
+            ];
+
+            for(let i = 0; i < 120; i++) {
+                const type = particleTypes[Math.floor(Math.random()*particleTypes.length)];
+                const particle = document.createElement('div');
+                const size = Math.random() * (type.size[1] - type.size[0]) + type.size[0];
+                
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${size}px; height: ${size}px;
+                    background: radial-gradient(circle, ${type.color}, transparent);
+                    border-radius: ${type.shape === 'circle' ? '50%' : '0'};
+                    left: ${Math.random()*100}%;
+                    top: ${Math.random()*100}%;
+                    animation: advancedFloat ${20+Math.random()*40}s infinite linear;
+                    opacity: ${Math.random()*0.5+0.2};
+                    pointer-events: none;
+                    box-shadow: 0 0 20px ${type.color};
+                    transform: rotate(${Math.random()*360}deg);
+                `;
+                
+                particle.style.animationDelay = `${Math.random()*40}s`;
+                particles.appendChild(particle);
+            }
+        }
+
+        // Add advanced keyframes
+        const advancedStyles = document.createElement('style');
+        advancedStyles.textContent = `
+            @keyframes advancedFloat {
+                0% { 
+                    transform: translateY(0px) rotate(0deg) scale(1) translateX(0px);
+                    opacity: 0.3;
+                }
+                25% { 
+                    transform: translateY(-40px) rotate(90deg) scale(1.4) translateX(20px);
+                    opacity: 0.8;
+                }
+                50% { 
+                    transform: translateY(-20px) rotate(180deg) scale(1.2) translateX(-10px);
+                    opacity: 0.5;
+                }
+                75% { 
+                    transform: translateY(-35px) rotate(270deg) scale(1.3) translateX(15px);
+                    opacity: 0.7;
+                }
+                100% { 
+                    transform: translateY(0px) rotate(360deg) scale(1) translateX(0px);
+                    opacity: 0.3;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+            }
+        `;
+        document.head.appendChild(advancedStyles);
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            setTimeout(createAdvancedParticles, 300);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

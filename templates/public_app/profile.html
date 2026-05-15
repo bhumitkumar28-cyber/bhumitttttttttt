@@ -1,0 +1,462 @@
+{% extends 'public_app/base.html' %}
+
+{% block title %}Profile - BloodBank AI{% endblock %}
+
+{% block content %}
+<!-- Profile Hero Header -->
+<div class="hero-profile position-relative overflow-hidden mb-5 p-5 rounded-4" 
+     style="background: linear-gradient(135deg, var(--blood-red), var(--blood-glow), var(--plasma-gold)); min-height: 300px;">
+    <div class="hero-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.4);"></div>
+    <div class="container position-relative">
+        <div class="row align-items-end h-100">
+            <div class="col-lg-8">
+                <div class="profile-hero-content">
+                    <h1 class="display-4 fw-bold mb-2 animate-fadeIn" data-aos="fade-up">
+                        Donor Dashboard
+                    </h1>
+                    <p class="lead mb-0 opacity-90 fs-5 animate-fadeIn" data-aos="fade-up" data-aos-delay="200">
+                        Manage your life-saving profile • Track donations • Medical stats
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="donor-status-badge animate-pulse" data-aos="zoom-in" data-aos-delay="400">
+                    <i class="fas fa-heartbeat me-2"></i>
+                    {% if user.is_verified %}
+                        <span class="fw-bold fs-5">✅ Verified Hero</span>
+                    {% else %}
+                        <span class="fw-bold fs-5 text-warning">⚠️ Pending Verification</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Profile Card -->
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <div class="card profile-master-card shadow-xl position-relative overflow-hidden">
+            <!-- Profile Header with Gradient -->
+            <div class="profile-header position-relative p-5" 
+                 style="background: linear-gradient(135deg, var(--dark-blood), var(--vein-blue));">
+                <div class="profile-avatar-section position-relative mx-auto d-block text-center mb-4">
+                    <div class="avatar-ring position-relative mx-auto mb-3">
+                        {% if request.user.profile_image %}
+                            <img src="{{ request.user.profile_image.url }}" 
+                                 alt="Profile" class="avatar-img shadow-lg animate-float"
+                                 style="width: 160px; height: 160px; object-fit: cover; transition: all 0.4s ease;">
+                            <div class="avatar-overlay">
+                                <label for="{{ form.profile_image.id_for_label }}" class="upload-trigger">
+                                    <i class="fas fa-camera fa-2x"></i>
+                                </label>
+                            </div>
+                        {% else %}
+                            <div class="avatar-placeholder bg-gradient position-relative d-flex align-items-center justify-content-center shadow-lg animate-float">
+                                <i class="fas fa-user-md fa-4x text-white"></i>
+                                <div class="avatar-overlay">
+                                    <label for="{{ form.profile_image.id_for_label }}" class="upload-trigger">
+                                        <i class="fas fa-camera fa-2x"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h2 class="fw-800 mb-2 animate-fadeInUp" data-aos="fade-up">{{ user.get_full_name|default:user.username }}</h2>
+                    <div class="role-badges mb-3">
+                        <span class="badge bg-gradient-donor fs-6 px-4 py-2 me-2 fw-semibold shadow-sm">
+                            <i class="fas fa-tint me-1"></i>{{ user.profile.blood_group|default:'Not Set' }}
+                        </span>
+                        <span class="badge bg-gradient-role fs-6 px-4 py-2 fw-semibold shadow-sm">
+                            {% if user.profile.role == 'donor' %}
+                                <i class="fas fa-heart fa-beat me-1 text-danger"></i>Elite Donor
+                            {% elif user.profile.role == 'requester' %}
+                                <i class="fas fa-user-md me-1 text-warning"></i>Patient Care
+                            {% else %}
+                                <i class="fas fa-users me-1"></i>{{ user.profile.role|title }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="donor-stats row g-3 justify-content-center mb-4">
+                        <div class="col-auto">
+                            <div class="stat-item text-center">
+                                <div class="stat-number count-up" data-target="{{ donations_count|default:0 }}">0</div>
+                                <small class="opacity-75">Donations</small>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-item text-center">
+                                <div class="stat-number count-up" data-target="{{ lives_saved|default:0 }}">0</div>
+                                <small class="opacity-75">Lives Saved</small>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="stat-item text-center">
+                                <span class="stat-number" style="color: var(--plasma-gold);">
+                                    {% if user.profile.last_donation %}
+                                        {{ user.profile.last_donation|date:"M Y" }}
+                                    {% else %}
+                                        Not donated
+                                    {% endif %}
+                                </span>
+                                <small class="opacity-75">Last Donation</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="card-body p-0">
+                <!-- Quick Stats Row -->
+                <div class="row g-0 p-4 border-bottom" style="background: rgba(220,38,38,0.05);">
+                    <div class="col-md-3 text-center py-3">
+                        <div class="location-pin">
+                            <i class="fas fa-map-marker-alt fa-2x mb-2" style="color: var(--plasma-gold);"></i>
+                            <div>{{ user.profile.city|default:'Not Set' }}, India</div>
+                            <small class="opacity-75">Service Area</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center py-3">
+                        <div class="phone-contact">
+                            <i class="fas fa-phone fa-2x mb-2" style="color: var(--vein-blue);"></i>
+                            <div>{{ user.profile.phone|default:'Not Set' }}</div>
+                            <small class="opacity-75">Emergency Contact</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center py-3">
+                        <div class="email-link">
+                            <i class="fas fa-envelope fa-2x mb-2" style="color: var(--blood-glow);"></i>
+                            <div class="truncate">{{ user.email }}</div>
+                            <small class="opacity-75">Notifications</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center py-3">
+                        <div class="verification-status">
+                            {% if user.is_verified %}
+                                <i class="fas fa-shield-check fa-2x mb-2 text-success"></i>
+                                <div class="text-success fw-bold">Fully Verified</div>
+                            {% else %}
+                                <i class="fas fa-clock fa-2x mb-2 text-warning"></i>
+                                <div class="text-warning">Pending Review</div>
+                            {% endif %}
+                            <small class="opacity-75">Status</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                <div class="p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <h3 class="fw-800 mb-0">
+                            <i class="fas fa-edit me-3 text-muted"></i>Edit Profile
+                        </h3>
+                        <div class="profile-progress">
+                            <div class="progress mb-2" style="height: 8px;">
+                                <div class="progress-bar bg-gradient-donor" role="progressbar" 
+                                     style="width: {{ profile_completion|default:60 }}%;"
+                                     aria-valuenow="{{ profile_completion|default:60 }}" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <small class="opacity-75">{{ profile_completion|default:60 }}% Complete</small>
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <!-- Personal Info -->
+                            <div class="col-lg-6">
+                                <div class="form-floating mb-4">
+                                    {{ form.first_name }}
+                                    <label for="{{ form.first_name.id_for_label }}">First Name <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="form-floating mb-4">
+                                    {{ form.last_name }}
+                                    <label for="{{ form.last_name.id_for_label }}">Last Name <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="form-floating mb-4">
+                                    {{ form.email }}
+                                    <label for="{{ form.email.id_for_label }}">Email <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Medical Info -->
+                            <div class="col-lg-6">
+                                <div class="form-floating mb-4">
+                                    {{ form.phone }}
+                                    <label for="{{ form.phone.id_for_label }}">Phone <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="form-floating mb-4">
+                                    {{ form.blood_group }}
+                                    <label for="{{ form.blood_group.id_for_label }}">Blood Group <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="form-floating mb-4">
+                                    {{ form.city }}
+                                    <label for="{{ form.city.id_for_label }}">City <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Image & Weight -->
+                        <div class="row g-4 mt-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold mb-3 d-block">
+                                    Profile Photo
+                                    {% if request.user.profile_image %}
+                                        <small class="d-block text-success mt-1">
+                                            <i class="fas fa-check-circle me-1"></i>Photo uploaded
+                                        </small>
+                                    {% endif %}
+                                </label>
+                                {{ form.profile_image }}
+                                <div class="form-text">Max 2MB. Square images work best (1:1)</div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Weight (kg)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent border-end-0 text-muted">
+                                                <i class="fas fa-weight-hanging"></i>
+                                            </span>
+                                            <input type="number" class="form-control border-start-0" 
+                                                   name="weight" value="{{ user.profile.weight|default:'' }}" 
+                                                   placeholder="65" min="40" max="150" step="0.5">
+                                            <span class="input-group-text bg-transparent border-start-0">kg</span>
+                                        </div>
+                                        <div class="form-text">Required for donation eligibility</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Availability</label>
+                                        <select class="form-select" name="availability">
+                                            <option value="immediate" {% if user.profile.availability == 'immediate' %}selected{% endif %}>
+                                                🚀 Immediate (24hrs)
+                                            </option>
+                                            <option value="weekend" {% if user.profile.availability == 'weekend' %}selected{% endif %}>
+                                                🏠 Weekends Only
+                                            </option>
+                                            <option value="emergency" {% if user.profile.availability == 'emergency' %}selected{% endif %}>
+                                                🚨 Emergency Only
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 mt-5 pt-4 border-top">
+                            <button type="submit" class="btn btn-danger btn-lg px-5 py-3 flex-grow-1 shadow-lg">
+                                <i class="fas fa-save me-2"></i>
+                                <span class="fw-bold">Update Profile</span>
+                            </button>
+                            <a href="{% url 'donation_history' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                                <i class="fas fa-history me-2"></i>View History
+                            </a>
+                            {% if not user.is_verified %}
+                                <a href="{% url 'verify_profile' %}" class="btn btn-warning btn-lg px-5 py-3">
+                                    <i class="fas fa-file-medical me-2"></i>Verify Now
+                                </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Profile Specific Styles */
+.profile-master-card {
+    border-radius: 30px !important;
+    backdrop-filter: blur(20px);
+}
+
+.avatar-ring {
+    width: 160px;
+    height: 160px;
+    border: 5px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    box-shadow: 0 0 50px rgba(220,38,38,0.3);
+    transition: all 0.4s ease;
+}
+
+.avatar-ring:hover {
+    border-color: rgba(255,255,255,0.4);
+    box-shadow: 0 0 80px rgba(220,38,38,0.5);
+    transform: scale(1.05);
+}
+
+.avatar-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(220,38,38,0.8);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.avatar-ring:hover .avatar-overlay {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.avatar-placeholder {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: var(--life-pulse) !important;
+}
+
+.bg-gradient-donor {
+    background: linear-gradient(45deg, var(--blood-red), var(--plasma-gold)) !important;
+}
+
+.bg-gradient-role {
+    background: linear-gradient(45deg, var(--vein-blue), var(--blood-glow)) !important;
+}
+
+.donor-status-badge {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.stat-item {
+    min-width: 100px;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    display: block;
+    color: var(--blood-glow);
+}
+
+.location-pin i, .phone-contact i, .email-link i {
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.form-floating label {
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--blood-glow);
+}
+
+.form-control:focus {
+    border-color: var(--blood-red);
+    box-shadow: 0 0 0 0.25rem rgba(220,38,38,0.25);
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+.profile-progress .progress {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.truncate {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeInUp { animation: fadeInUp 0.8s ease-out forwards; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-pulse { animation: pulse 2s infinite; }
+
+@media (max-width: 768px) {
+    .profile-header { padding: 2rem 1.5rem !important; }
+    .avatar-ring { width: 140px; height: 140px; }
+    .avatar-img, .avatar-placeholder { width: 140px; height: 140px; }
+}
+</style>
+
+<script>
+// Profile-specific JS
+document.addEventListener('DOMContentLoaded', function() {
+    // Counter animations
+    document.querySelectorAll('.count-up').forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                counter.textContent = target.toLocaleString();
+                clearInterval(timer);
+            } else {
+                counter.textContent = Math.floor(current).toLocaleString();
+            }
+        }, 30);
+    });
+
+    // Form validation
+    const form = document.querySelector('form.needs-validation');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            this.classList.add('was-validated');
+        });
+
+        // Real-time weight validation
+        const weightInput = document.querySelector('input[name="weight"]');
+        if (weightInput) {
+            weightInput.addEventListener('input', function() {
+                const value = parseFloat(this.value);
+                if (value < 40 || value > 150) {
+                    this.setCustomValidity('Weight must be between 40-150kg');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        }
+    }
+
+    // Smooth hover effects
+    document.querySelectorAll('.avatar-ring, .stat-item, .form-floating').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            el.style.transform = 'translateY(-5px)';
+        });
+        el.addEventListener('mouseleave', () => {
+            el.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}
