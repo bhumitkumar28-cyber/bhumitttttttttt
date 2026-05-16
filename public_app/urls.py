@@ -7,5 +7,6 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
-    path('blood-availability/', views.blood_availability, name='blood_availability'),
+    path('availability/', views.blood_availability, name='blood_availability'),
+    path('history/', views.history, name='history'),  # Donor history
 ]

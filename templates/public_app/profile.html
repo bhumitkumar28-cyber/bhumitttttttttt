@@ -256,9 +256,11 @@
                                 <i class="fas fa-history me-2"></i>View History
                             </a>
                             {% if not user.is_verified %}
-                                <a href="{% url 'verify_profile' %}" class="btn btn-warning btn-lg px-5 py-3">
-                                    <i class="fas fa-file-medical me-2"></i>Verify Now
-                                </a>
+                               {% if not user.is_verified %}
+    <button type="button" class="btn btn-warning btn-lg px-5 py-3" disabled>
+        <i class="fas fa-file-medical me-2"></i>Not Verified
+    </button>
+{% endif %}
                             {% endif %}
                         </div>
                     </form>
